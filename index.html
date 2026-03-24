@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="description" content="Michael FX Journal - Professional Trading Journal with Auto-Risk Management">
+    
+    <title>Michael FX Journal</title>
+    
+    <!-- Base64 Encoded SVG Icon (Cyan/Gold Trend Chart with $) -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSIzMCIgZmlsbD0iIzBhMGEwYSIvPjxwYXRoIGQ9Ik0zMCAxMjBMNjAgOTBMOTAgMTEwTDEyMCA3MEwxNTAgNDAiIHN0cm9rZT0iIzAwZDRmZiIgc3Ryb2tlLXdpZHRoPSI4IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz48Y2lyY2xlIGN4PSIxNTAiIGN5PSI0MCIgcj0iMTAiIGZpbGw9IiNmZmQwMDAiLz48dGV4dCB4PSI5MCIgeT0iMTUwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNDAiIGZvbnQtd2VpZ2h0PSJib2xkIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjZmZkMDAwIj4kPC90ZXh0Pjwvc3ZnPg==">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHJ4PSI2IiBmaWxsPSIjMGEwYTBhIi8+PHBhdGggZD0iTTUgMjBMMTAgMTVMMTUgMThMMjAgMTJMMjUgNyIgc3Ryb2tlPSIjMDBkNGZmIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxjaXJjbGUgY3g9IjI1IiBjeT0iNyIgcj0iMiIgZmlsbD0iI2ZmZDAwMCIvPjwvc3ZnPg==">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-card: rgba(20, 20, 25, 0.8);
+            --cyan: #00d4ff;
+            --cyan-glow: rgba(0, 212, 255, 0.3);
+            --gold: #ffd000;
+            --gold-glow: rgba(255, 208, 0, 0.3);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --border: rgba(255, 255, 255, 0.1);
+            --success: #00ff88;
+            --danger: #ff4757;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Glassmorphism Utilities */
+        .glass {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+        }
+        
+        .glass-cyan {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 212, 255, 0.05));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 30px var(--cyan-glow);
+        }
+        
+        .glass-gold {
+            background: linear-gradient(135deg, rgba(255, 208, 0, 0.15), rgba(255, 208, 0, 0.05));
+            border: 1px solid rgba(255, 208, 0, 0.4);
+            box-shadow: 0 0 30px var(--gold-glow);
+        }
+        
+        /* Header */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem;
+            background: linear-gradient(180deg, var(--bg-primary), transparent);
+        }
+        
+        .app-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--cyan), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+        
+        .app-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        /* Daily VIP Signal Card */
+        .vip-signal-card {
+            margin: 0.5rem 1rem 1rem;
+            padding: 1.25rem;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .vip-signal-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--gold), transparent 30%);
+            animation: rotate 4s linear infinite;
+            opacity: 0.3;
+        }
+        
+        .vip-content {
+            position: relative;
+            z-index: 1;
+            background: rgba(10, 10, 10, 0.9);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+        
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+        
+        .vip-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, var(--gold), #ffaa00);
+            color: #000;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+        
+        .vip-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .vip-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .vip-label {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .vip-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+        
+        .vip-value.long {
+            color: var(--success);
+        }
+        
+        /* Dashboard Grid */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            padding: 0 1rem 1rem;
+        }
+        
+        @media (min-width: 768px) {
+            .dashboard {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        .stat-card {
+            padding: 1rem;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--cyan);
+        }
+        
+        .stat-value.editable {
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.25rem 0.5rem;
+            color: var(--cyan);
+            font-size: 1.1rem;
+            width: 100%;
+            outline: none;
+        }
+        
+        .stat-value.editable:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 10px var(--cyan-glow);
+        }
+        
+        .stat-sublabel {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Top Pairs Section */
+        .pairs-section {
+            margin: 0 1rem 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+        }
+        
+        .pairs-title {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.75rem;
+        }
+        
+        .pairs-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .pair-tag {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            color: var(--cyan);
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .pair-tag.best {
+            background: rgba(0, 255, 136, 0.15);
+            border-color: var(--success);
+            color: var(--success);
+        }
+        
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            gap: 0.75rem;
+            padding: 0 1rem 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), #0099cc);
+            color: #000;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #cc0033);
+            color: #fff;
+        }
+        
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold), #ffaa00);
+            color: #000;
+            animation: goldPulse 2s infinite;
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+        
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px var(--gold-glow);
+        }
+        
+        .btn-gold.active {
+            background: linear-gradient(135deg, var(--success), #00cc66);
+            animation: none;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+        
+        @keyframes goldPulse {
+            0%, 100% { box-shadow: 0 0 20px var(--gold-glow); }
+            50% { box-shadow: 0 0 40px var(--gold-glow), 0 0 60px rgba(255, 208, 0, 0.2); }
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Table Container */
+        .table-container {
+            margin: 0 1rem 2rem;
+            border-radius: 12px;
+            overflow: hidden;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        table {
+            width: 100%;
+            min-width: 1400px;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        th {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--cyan);
+            padding: 0.75rem 0.5rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.65rem;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        
+        td {
+            padding: 0.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+        
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        tr.locked {
+            opacity: 0.6;
+            position: relative;
+        }
+        
+        tr.locked::after {
+            content: '🔒';
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            opacity: 0.5;
+        }
+        
+        tr.locked input, tr.locked select {
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        
+        tr.free {
+            border-left: 3px solid var(--success);
+        }
+        
+        /* Form Elements */
+        input, select {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.4rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            width: 100%;
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--cyan);
+        }
+        
+        input[type="checkbox"] {
+            width: auto;
+            transform: scale(1.2);
+            accent-color: var(--cyan);
+        }
+        
+        input[type="number"] {
+            width: 80px;
+        }
+        
+        input.readonly {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+        }
+        
+        select {
+            cursor: pointer;
+        }
+        
+        /* Premium Lock Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal {
+            background: var(--bg-secondary);
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 0 60px var(--gold-glow);
+        }
+        
+        .modal-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .modal h2 {
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .modal p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .payment-info {
+            background: rgba(255, 208, 0, 0.1);
+            border: 1px solid rgba(255, 208, 0, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .payment-row:last-child {
+            margin-bottom: 0;
+            padding-top: 0.5rem;
+            border-top: 1px solid rgba(255, 208, 0, 0.2);
+            font-weight: 700;
+            color: var(--gold);
+        }
+        
+        .pin-section {
+            margin: 1.5rem 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+        }
+        
+        .pin-input {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            text-align: center;
+            letter-spacing: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--cyan);
+            border-radius: 8px;
+            color: var(--cyan);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+        
+        .pin-input::placeholder {
+            text-transform: none;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+        }
+        
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #25d366;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            width: 100%;
+            justify-content: center;
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--cyan);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0099cc;
+        }
+        
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <h1 class="app-title">Michael FX Journal</h1>
+        <div class="app-subtitle">Professional Trading Analytics</div>
+    </header>
+    
+    <!-- Daily VIP Signal Card -->
+    <div class="vip-signal-card glass-gold">
+        <div class="vip-content">
+            <div class="vip-badge">
+                <span>👑</span> Daily VIP Signal
+            </div>
+            <div class="vip-grid">
+                <div class="vip-item">
+                    <span class="vip-label">Pair</span>
+                    <span class="vip-value">GBPUSD</span>
+                </div>
+                <div class="vip-item">
+                    <span class="vip-label">Direction</span>
+                    <span class="vip-value long">LONG POSITION</span>
+                </div>
+                <div class="vip-item">
+                    <span class="vip-label">Entry</span>
+                    <span class="vip-value">111111</span>
+                </div>
+                <div class="vip-item">
+                    <span class="vip-label">SL</span>
+                    <span class="vip-value">11111</span>
+                </div>
+                <div class="vip-item">
+                    <span class="vip-label">TP</span>
+                    <span class="vip-value">11111</span>
+                </div>
+                <div class="vip-item">
+                    <span class="vip-label">Status</span>
+                    <span class="vip-value pulse">ACTIVE</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dashboard Grid -->
+    <div class="dashboard">
+        <div class="stat-card glass">
+            <span class="stat-label">Starting Balance</span>
+            <input type="number" id="startingBalance" class="stat-value editable" value="10000" min="0" step="100">
+        </div>
+        <div class="stat-card glass">
+            <span class="stat-label">Current Balance</span>
+            <span id="currentBalance" class="stat-value">$10,000.00</span>
+        </div>
+        <div class="stat-card glass">
+            <span class="stat-label">Overall Win Rate</span>
+            <span id="overallWinRate" class="stat-value">0%</span>
+            <span class="stat-sublabel">All Trades</span>
+        </div>
+        <div class="stat-card glass">
+            <span class="stat-label">Personal Win Rate</span>
+            <span id="personalWinRate" class="stat-value">0%</span>
+            <span class="stat-sublabel">Non-Signal Trades</span>
+        </div>
+        <div class="stat-card glass">
+            <span class="stat-label">Signal Win Rate</span>
+            <span id="signalWinRate" class="stat-value">0%</span>
+            <span class="stat-sublabel">Signal Trades Only</span>
+        </div>
+    </div>
+    
+    <!-- Top Pairs Section -->
+    <div class="pairs-section glass">
+        <div class="pairs-title">Analytics</div>
+        <div style="margin-bottom: 0.75rem;">
+            <strong style="color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase;">Top 5 Traded Pairs:</strong>
+            <div class="pairs-list" id="topPairs" style="margin-top: 0.5rem;">
+                <span style="color: var(--text-secondary); font-size: 0.8rem;">No trades yet</span>
+            </div>
+        </div>
+        <div>
+            <strong style="color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase;">Highest Win Rate Pair:</strong>
+            <div id="bestPair" style="margin-top: 0.5rem; color: var(--success); font-weight: 600; font-size: 0.9rem;">-</div>
+        </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="actions">
+        <button class="btn btn-primary" onclick="saveState()">💾 Save Journal</button>
+        <button class="btn btn-danger" onclick="clearAll()">🗑️ Clear All</button>
+        <button class="btn btn-gold" id="upgradeBtn" onclick="showPremiumModal()">🔓 Upgrade to Premium</button>
+    </div>
+    
+    <!-- Data Table -->
+    <div class="table-container glass">
+        <table id="journalTable">
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Pair</th>
+                    <th>Strategy</th>
+                    <th>Rules?</th>
+                    <th>Signal Trade?</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
+                    <th>Running Time</th>
+                    <th>Entry</th>
+                    <th>SL</th>
+                    <th>TP</th>
+                    <th>Profit $</th>
+                    <th>Risk %</th>
+                    <th>Win</th>
+                    <th>Loss</th>
+                    <th>Lot Size</th>
+                    <th>Pips</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- All 1000 rows generated by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Premium Lock Modal -->
+    <div class="modal-overlay" id="premiumModal">
+        <div class="modal">
+            <div class="modal-icon">🔒</div>
+            <h2>Premium Locked</h2>
+            <p>Upgrade to the full 1,000-Day Michael FX Journal and Unlock Auto-Risk Management for just ₦10,000.</p>
+            
+            <div class="payment-info">
+                <div class="payment-row">
+                    <span>Bank:</span>
+                    <span>OPay</span>
+                </div>
+                <div class="payment-row">
+                    <span>Account:</span>
+                    <span>8112401459</span>
+                </div>
+                <div class="payment-row">
+                    <span>Name:</span>
+                    <span>Michael Segun Martin</span>
+                </div>
+            </div>
+            
+            <a href="https://wa.me/2340000000000?text=Hi%20Michael,%20I%20have%20made%20payment%20of%20₦10,000%20for%20Michael%20FX%20Journal%20Premium.%20Here%20is%20my%20receipt." class="whatsapp-btn" target="_blank">
+                📱 Send Receipt via WhatsApp
+            </a>
+            
+            <div class="pin-section">
+                <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">Already paid? Enter your unlock PIN:</p>
+                <input type="password" id="unlockPin" class="pin-input" placeholder="Enter PIN" maxlength="12">
+                <button class="btn btn-primary" onclick="checkPin()" style="width: 100%;">Unlock Now</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Asset Dictionary with Multipliers
+        const assetDictionary = {
+            // Forex Majors
+            'EURUSD': { type: 'forex', multiplier: 10000, pipSize: 0.0001 },
+            'GBPUSD': { type: 'forex', multiplier: 10000, pipSize: 0.0001 },
+            'USDJPY': { type: 'forex', multiplier: 100, pipSize: 0.01 },
+            'USDCHF': { type: 'forex', multiplier: 10000, pipSize: 0.0001 },
+            'AUDUSD': { type: 'forex', multiplier: 10000, pipSize: 0.0001 },
+            'NZDUSD': { type: 'forex', multiplier: 10000, pipSize: 0.0001 },
+            'USDCAD': { type: 'forex', multiplier: 10000, pipSize: 0.0001 },
+            'EURGBP': { type: 'forex', multiplier: 10000, pipSize: 0.0001 },
+            'EURJPY': { type: 'forex', multiplier: 100, pipSize: 0.01 },
+            'GBPJPY': { type: 'forex', multiplier: 100, pipSize: 0.01 },
+            'CHFJPY': { type: 'forex', multiplier: 100, pipSize: 0.01 },
+            'AUDJPY': { type: 'forex', multiplier: 100, pipSize: 0.01 },
+            'NZDJPY': { type: 'forex', multiplier: 100, pipSize: 0.01 },
+            'CADJPY': { type: 'forex', multiplier: 100, pipSize: 0.01 },
+            'EURAUD': { type: 'forex', multiplier: 10000, pipSize: 0.0001 },
+            'EURCHF': { type: 'forex', multiplier: 10000, pipSize: 0.0001 },
+            'GBPAUD': { type: 'forex', multiplier: 10000, pipSize: 0.0001 },
+            'GBPCAD': { type: 'forex', multiplier: 10000, pipSize: 0.0001 },
+            
+            // Metals
+            'XAUUSD': { type: 'metal', multiplier: 10, pipSize: 0.1 },
+            'XAGUSD': { type: 'metal', multiplier: 10, pipSize: 0.01 },
+            
+            // Indices
+            'US30': { type: 'index', multiplier: 1, pipSize: 1 },
+            'US100': { type: 'index', multiplier: 1, pipSize: 1 },
+            'US500': { type: 'index', multiplier: 1, pipSize: 1 },
+            'GER30': { type: 'index', multiplier: 1, pipSize: 1 },
+            'UK100': { type: 'index', multiplier: 1, pipSize: 1 },
+            'JPN225': { type: 'index', multiplier: 1, pipSize: 1 },
+            
+            // Deriv Synthetics - Volatility
+            'V10': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            'V25': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            'V50': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            'V75': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            'V100': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            'V10(1s)': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            'V25(1s)': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            'V50(1s)': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            'V75(1s)': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            'V100(1s)': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            
+            // Deriv Synthetics - Boom/Crash
+            'Boom500': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            'Boom1000': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            'Crash500': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            'Crash1000': { type: 'synthetic', multiplier: 1000, pipSize: 0.01, contractSize: 1 },
+            
+            // Deriv Synthetics - Step
+            'StepIndex': { type: 'synthetic', multiplier: 1000, pipSize: 0.1, contractSize: 10 },
+            
+            // Derived FX
+            'DFXEURUSD': { type: 'synthetic', multiplier: 100000, pipSize: 0.00001, contractSize: 1 },
+            'DFXGBPUSD': { type: 'synthetic', multiplier: 100000, pipSize: 0.00001, contractSize: 1 },
+            'DFXUSDJPY': { type: 'synthetic', multiplier: 1000, pipSize: 0.001, contractSize: 1 }
+        };
+        
+        const pairOptions = Object.keys(assetDictionary).map(pair => 
+            `<option value="${pair}">${pair}</option>`
+        ).join('');
+        
+        let isPremiumUnlocked = localStorage.getItem('michaelFxPremium') === 'true';
+        const FREE_ROWS = 5;
+        const TOTAL_ROWS = 1000;
+        
+        // Generate All 1000 Rows with DocumentFragment
+        function generateTable() {
+            const tbody = document.getElementById('tableBody');
+            const fragment = document.createDocumentFragment();
+            
+            for (let i = 1; i <= TOTAL_ROWS; i++) {
+                const row = document.createElement('tr');
+                row.id = `row-${i}`;
+                row.dataset.day = i;
+                
+                // Apply locked or free styling
+                if (!isPremiumUnlocked && i > FREE_ROWS) {
+                    row.classList.add('locked');
+                } else {
+                    row.classList.add('free');
+                }
+                
+                row.innerHTML = `
+                    <td><strong>#${i}</strong></td>
+                    <td>
+                        <select class="pair-select" data-row="${i}" onchange="updateCalculations(${i})">
+                            <option value="">Select Pair</option>
+                            ${pairOptions}
+                        </select>
+                    </td>
+                    <td><input type="text" class="strategy" data-row="${i}" placeholder="Strategy"></td>
+                    <td><input type="checkbox" class="rules" data-row="${i}"></td>
+                    <td><input type="checkbox" class="signal-trade" data-row="${i}" onchange="updateCalculations(${i})"></td>
+                    <td><input type="time" class="time-in" data-row="${i}" onchange="calculateRunningTime(${i})"></td>
+                    <td><input type="time" class="time-out" data-row="${i}" onchange="calculateRunningTime(${i})"></td>
+                    <td><input type="text" class="running-time readonly" data-row="${i}" readonly placeholder="--:--"></td>
+                    <td><input type="number" class="entry" data-row="${i}" step="0.00001" oninput="updateCalculations(${i})"></td>
+                    <td><input type="number" class="sl" data-row="${i}" step="0.00001" oninput="updateCalculations(${i})"></td>
+                    <td><input type="number" class="tp" data-row="${i}" step="0.00001"></td>
+                    <td><input type="number" class="profit readonly" data-row="${i}" readonly value="0"></td>
+                    <td><input type="number" class="risk-pct" data-row="${i}" min="0" max="100" step="0.1" oninput="updateCalculations(${i})"></td>
+                    <td><input type="checkbox" class="win" data-row="${i}" onchange="handleWinLoss(${i}, 'win')"></td>
+                    <td><input type="checkbox" class="loss" data-row="${i}" onchange="handleWinLoss(${i}, 'loss')"></td>
+                    <td><input type="number" class="lot-size readonly" data-row="${i}" readonly step="0.01"></td>
+                    <td><input type="number" class="pips readonly" data-row="${i}" readonly step="0.1"></td>
+                `;
+                
+                // Add click handler for locked rows
+                row.addEventListener('click', function(e) {
+                    if (!isPremiumUnlocked && i > FREE_ROWS) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showPremiumModal();
+                    }
+                });
+                
+                fragment.appendChild(row);
+            }
+            
+            tbody.appendChild(fragment);
+        }
+        
+        // Calculate Running Time
+        function calculateRunningTime(rowNum) {
+            const row = document.querySelector(`#row-${rowNum}`);
+            const timeIn = row.querySelector('.time-in').value;
+            const timeOut = row.querySelector('.time-out').value;
+            const runningTimeInput = row.querySelector('.running-time');
+            
+            if (timeIn && timeOut) {
+                const start = new Date(`2000-01-01T${timeIn}`);
+                const end = new Date(`2000-01-01T${timeOut}`);
+                let diff = (end - start) / 1000 / 60; // minutes
+                
+                if (diff < 0) diff += 24 * 60; // Handle overnight
+                
+                const hours = Math.floor(diff / 60);
+                const minutes = Math.floor(diff % 60);
+                runningTimeInput.value = `${hours}h ${minutes}m`;
+            }
+        }
+        
+        // Handle Win/Loss Checkboxes
+        function handleWinLoss(rowNum, type) {
+            const row = document.querySelector(`#row-${rowNum}`);
+            const winBox = row.querySelector('.win');
+            const lossBox = row.querySelector('.loss');
+            
+            // Mutual exclusive
+            if (type === 'win' && winBox.checked) {
+                lossBox.checked = false;
+            } else if (type === 'loss' && lossBox.checked) {
+                winBox.checked = false;
+            }
+            
+            updateCalculations(rowNum);
+            updateDashboard();
+        }
+        
+        // Auto-Lot Size & Profit Calculator
+        function updateCalculations(rowNum) {
+            const row = document.querySelector(`#row-${rowNum}`);
+            const pair = row.querySelector('.pair-select').value;
+            const entry = parseFloat(row.querySelector('.entry').value) || 0;
+            const sl = parseFloat(row.querySelector('.sl').value) || 0;
+            const riskPct = parseFloat(row.querySelector('.risk-pct').value) || 0;
+            const winChecked = row.querySelector('.win').checked;
+            const lossChecked = row.querySelector('.loss').checked;
+            
+            const startingBalance = parseFloat(document.getElementById('startingBalance').value) || 10000;
+            
+            // Calculate Lot Size
+            if (pair && entry && sl && riskPct) {
+                const asset = assetDictionary[pair];
+                if (asset) {
+                    const riskAmount = startingBalance * (riskPct / 100);
+                    const stopLossPips = Math.abs(entry - sl) * asset.multiplier;
+                    
+                    if (stopLossPips > 0) {
+                        let lotSize;
+                        
+                        if (asset.type === 'synthetic') {
+                            const pipValue = asset.pipSize * (asset.contractSize || 1);
+                            lotSize = riskAmount / (stopLossPips * pipValue);
+                        } else if (asset.type === 'metal') {
+                            lotSize = riskAmount / (stopLossPips * 0.01);
+                        } else if (asset.type === 'index') {
+                            lotSize = riskAmount / stopLossPips;
+                        } else {
+                            lotSize = riskAmount / (stopLossPips * 10);
+                        }
+                        
+                        row.querySelector('.lot-size').value = lotSize.toFixed(2);
+                    }
+                }
+            }
+            
+            // Calculate Profit/Pips when Win/Loss checked
+            if ((winChecked || lossChecked) && pair && entry && sl) {
+                const asset = assetDictionary[pair];
+                const lotSize = parseFloat(row.querySelector('.lot-size').value) || 0;
+                
+                if (asset && lotSize > 0) {
+                    const tp = parseFloat(row.querySelector('.tp').value) || entry;
+                    const pips = Math.abs(tp - entry) * asset.multiplier;
+                    let profit = 0;
+                    
+                    if (asset.type === 'synthetic') {
+                        profit = pips * lotSize * asset.pipSize * (asset.contractSize || 1);
+                    } else if (asset.type === 'metal') {
+                        profit = pips * lotSize * 0.01;
+                    } else if (asset.type === 'index') {
+                        profit = pips * lotSize;
+                    } else {
+                        profit = pips * lotSize * 10;
+                    }
+                    
+                    if (lossChecked) profit = -Math.abs(profit);
+                    
+                    row.querySelector('.pips').value = pips.toFixed(1);
+                    row.querySelector('.profit').value = profit.toFixed(2);
+                }
+            } else if (!winChecked && !lossChecked) {
+                row.querySelector('.pips').value = '';
+                row.querySelector('.profit').value = '0';
+            }
+            
+            updateDashboard();
+        }
+        
+        // Update Dashboard Statistics
+        function updateDashboard() {
+            const rows = document.querySelectorAll('#tableBody tr');
+            let totalProfit = 0;
+            let totalTrades = 0;
+            let winningTrades = 0;
+            let signalTrades = 0;
+            let winningSignalTrades = 0;
+            let personalTrades = 0;
+            let winningPersonalTrades = 0;
+            
+            const pairStats = {};
+            
+            rows.forEach(row => {
+                const profit = parseFloat(row.querySelector('.profit').value) || 0;
+                const winChecked = row.querySelector('.win').checked;
+                const lossChecked = row.querySelector('.loss').checked;
+                const isSignal = row.querySelector('.signal-trade').checked;
+                const pair = row.querySelector('.pair-select').value;
+                
+                if (winChecked || lossChecked) {
+                    totalTrades++;
+                    totalProfit += profit;
+                    
+                    if (winChecked) {
+                        winningTrades++;
+                        if (isSignal) {
+                            winningSignalTrades++;
+                        } else {
+                            winningPersonalTrades++;
+                        }
+                    }
+                    
+                    if (isSignal) {
+                        signalTrades++;
+                    } else {
+                        personalTrades++;
+                    }
+                    
+                    // Track pair statistics
+                    if (pair) {
+                        if (!pairStats[pair]) {
+                            pairStats[pair] = { count: 0, wins: 0 };
+                        }
+                        pairStats[pair].count++;
+                        if (winChecked) pairStats[pair].wins++;
+                    }
+                }
+            });
+            
+            // Update balances
+            const startingBalance = parseFloat(document.getElementById('startingBalance').value) || 10000;
+            const currentBalance = startingBalance + totalProfit;
+            
+            document.getElementById('currentBalance').textContent = `$${currentBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('currentBalance').style.color = currentBalance >= startingBalance ? 'var(--success)' : 'var(--danger)';
+            
+            // Update win rates
+            const overallWinRate = totalTrades > 0 ? (winningTrades / totalTrades * 100).toFixed(1) : 0;
+            const signalWinRate = signalTrades > 0 ? (winningSignalTrades / signalTrades * 100).toFixed(1) : 0;
+            const personalWinRate = personalTrades > 0 ? (winningPersonalTrades / personalTrades * 100).toFixed(1) : 0;
+            
+            document.getElementById('overallWinRate').textContent = `${overallWinRate}%`;
+            document.getElementById('signalWinRate').textContent = `${signalWinRate}%`;
+            document.getElementById('personalWinRate').textContent = `${personalWinRate}%`;
+            
+            // Update Top 5 Pairs
+            const sortedPairs = Object.entries(pairStats)
+                .sort((a, b) => b[1].count - a[1].count)
+                .slice(0, 5);
+            
+            const topPairsContainer = document.getElementById('topPairs');
+            if (sortedPairs.length > 0) {
+                topPairsContainer.innerHTML = sortedPairs.map(([pair, stats]) => 
+                    `<span class="pair-tag">${pair} (${stats.count})</span>`
+                ).join('');
+            } else {
+                topPairsContainer.innerHTML = '<span style="color: var(--text-secondary); font-size: 0.8rem;">No trades yet</span>';
+            }
+            
+            // Update Best Pair
+            let bestPair = null;
+            let bestRate = -1;
+            
+            Object.entries(pairStats).forEach(([pair, stats]) => {
+                if (stats.count >= 3) {
+                    const rate = stats.wins / stats.count;
+                    if (rate > bestRate) {
+                        bestRate = rate;
+                        bestPair = pair;
+                    }
+                }
+            });
+            
+            document.getElementById('bestPair').textContent = bestPair ? 
+                `${bestPair} (${(bestRate * 100).toFixed(0)}% Win Rate)` : 
+                'Need more data (min 3 trades)';
+        }
+        
+        // Show Premium Modal
+        function showPremiumModal() {
+            document.getElementById('premiumModal').classList.add('active');
+        }
+        
+        // Hide Premium Modal
+        function hidePremiumModal() {
+            document.getElementById('premiumModal').classList.remove('active');
+        }
+        
+        // Check PIN and Unlock
+        function checkPin() {
+            const pin = document.getElementById('unlockPin').value;
+            if (pin === 'KILLZONE2026') {
+                isPremiumUnlocked = true;
+                localStorage.setItem('michaelFxPremium', 'true');
+                unlockAllRows();
+                updateUpgradeButton();
+                hidePremiumModal();
+                alert('✅ Premium Unlocked! Welcome to the full 1,000-Day Journal.');
+            } else {
+                alert('❌ Invalid PIN. Please make payment to unlock.');
+            }
+        }
+        
+        // Unlock All Rows
+        function unlockAllRows() {
+            document.querySelectorAll('#tableBody tr').forEach((row, index) => {
+                row.classList.remove('locked');
+                row.classList.add('free');
+                // Remove click blocker
+                row.replaceWith(row.cloneNode(true));
+            });
+            // Re-attach event listeners
+            reattachEventListeners();
+        }
+        
+        // Reattach event listeners after unlocking
+        function reattachEventListeners() {
+            for (let i = 1; i <= TOTAL_ROWS; i++) {
+                const row = document.querySelector(`#row-${i}`);
+                if (row) {
+                    // Reattach all onchange handlers
+                    const pairSelect = row.querySelector('.pair-select');
+                    const signalTrade = row.querySelector('.signal-trade');
+                    const timeIn = row.querySelector('.time-in');
+                    const timeOut = row.querySelector('.time-out');
+                    const entry = row.querySelector('.entry');
+                    const sl = row.querySelector('.sl');
+                    const riskPct = row.querySelector('.risk-pct');
+                    const win = row.querySelector('.win');
+                    const loss = row.querySelector('.loss');
+                    
+                    if (pairSelect) pairSelect.onchange = () => updateCalculations(i);
+                    if (signalTrade) signalTrade.onchange = () => updateCalculations(i);
+                    if (timeIn) timeIn.onchange = () => calculateRunningTime(i);
+                    if (timeOut) timeOut.onchange = () => calculateRunningTime(i);
+                    if (entry) entry.oninput = () => updateCalculations(i);
+                    if (sl) sl.oninput = () => updateCalculations(i);
+                    if (riskPct) riskPct.oninput = () => updateCalculations(i);
+                    if (win) win.onchange = () => handleWinLoss(i, 'win');
+                    if (loss) loss.onchange = () => handleWinLoss(i, 'loss');
+                }
+            }
+        }
+        
+        // Update Upgrade Button
+        function updateUpgradeButton() {
+            const btn = document.getElementById('upgradeBtn');
+            if (isPremiumUnlocked) {
+                btn.textContent = 'Premium Active ✅';
+                btn.classList.add('active');
+                btn.onclick = null;
+            }
+        }
+        
+        // Clear All with Premium Check
+        function clearAll() {
+            if (!isPremiumUnlocked) {
+                showPremiumModal();
+                return;
+            }
+            
+            if (confirm('⚠️ Are you sure you want to clear all journal entries? This cannot be undone.')) {
+                document.querySelectorAll('#tableBody input').forEach(input => {
+                    if (input.type === 'checkbox') {
+                        input.checked = false;
+                    } else {
+                        input.value = '';
+                    }
+                });
+                document.querySelectorAll('#tableBody select').forEach(select => {
+                    select.value = '';
+                });
+                updateDashboard();
+                localStorage.removeItem('michaelFxJournal');
+            }
+        }
+        
+        // Save State
+        function saveState() {
+            const data = [];
+            document.querySelectorAll('#tableBody tr').forEach(row => {
+                const rowData = {
+                    day: row.dataset.day,
+                    pair: row.querySelector('.pair-select').value,
+                    strategy: row.querySelector('.strategy').value,
+                    rules: row.querySelector('.rules').checked,
+                    signalTrade: row.querySelector('.signal-trade').checked,
+                    timeIn: row.querySelector('.time-in').value,
+                    timeOut: row.querySelector('.time-out').value,
+                    runningTime: row.querySelector('.running-time').value,
+                    entry: row.querySelector('.entry').value,
+                    sl: row.querySelector('.sl').value,
+                    tp: row.querySelector('.tp').value,
+                    profit: row.querySelector('.profit').value,
+                    riskPct: row.querySelector('.risk-pct').value,
+                    win: row.querySelector('.win').checked,
+                    loss: row.querySelector('.loss').checked,
+                    lotSize: row.querySelector('.lot-size').value,
+                    pips: row.querySelector('.pips').value
+                };
+                data.push(rowData);
+            });
+            
+            localStorage.setItem('michaelFxJournal', JSON.stringify(data));
+            localStorage.setItem('michaelFxBalance', document.getElementById('startingBalance').value);
+            
+            // Visual feedback
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✅ Saved!';
+            setTimeout(() => btn.textContent = originalText, 1500);
+        }
+        
+        // Load State
+        function loadState() {
+            const savedBalance = localStorage.getItem('michaelFxBalance');
+            if (savedBalance) {
+                document.getElementById('startingBalance').value = savedBalance;
+            }
+            
+            const saved = localStorage.getItem('michaelFxJournal');
+            if (saved) {
+                const data = JSON.parse(saved);
+                data.forEach((rowData) => {
+                    const row = document.querySelector(`#row-${rowData.day}`);
+                    if (row) {
+                        row.querySelector('.pair-select').value = rowData.pair || '';
+                        row.querySelector('.strategy').value = rowData.strategy || '';
+                        row.querySelector('.rules').checked = rowData.rules || false;
+                        row.querySelector('.signal-trade').checked = rowData.signalTrade || false;
+                        row.querySelector('.time-in').value = rowData.timeIn || '';
+                        row.querySelector('.time-out').value = rowData.timeOut || '';
+                        row.querySelector('.running-time').value = rowData.runningTime || '';
+                        row.querySelector('.entry').value = rowData.entry || '';
+                        row.querySelector('.sl').value = rowData.sl || '';
+                        row.querySelector('.tp').value = rowData.tp || '';
+                        row.querySelector('.profit').value = rowData.profit || '0';
+                        row.querySelector('.risk-pct').value = rowData.riskPct || '';
+                        row.querySelector('.win').checked = rowData.win || false;
+                        row.querySelector('.loss').checked = rowData.loss || false;
+                        row.querySelector('.lot-size').value = rowData.lotSize || '';
+                        row.querySelector('.pips').value = rowData.pips || '';
+                    }
+                });
+                updateDashboard();
+            }
+        }
+        
+        // Monitor starting balance changes
+        document.getElementById('startingBalance').addEventListener('input', function() {
+            updateDashboard();
+        });
+        
+        // Close modal on overlay click
+        document.getElementById('premiumModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hidePremiumModal();
+            }
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            generateTable();
+            loadState();
+            updateUpgradeButton();
+        });
+        
+        // Auto-save on page hide
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                saveState();
+            }
+        });
+    </script>
+</body>
+</html>
